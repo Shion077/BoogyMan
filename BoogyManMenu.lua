@@ -9,6 +9,10 @@ local defaultButtons = {
     {
         name = "Dex Gui",
         code = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/peyton2465/Dex/master/out.lua"))()'
+    },    
+    {
+        name = "Anime Fighting",
+        code = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/IdiotHub/Scripts/refs/heads/main/Avatar%20Fighting%20Simulator/main.lua"))()'
     },
     {
         name = "Auto Clicker",
