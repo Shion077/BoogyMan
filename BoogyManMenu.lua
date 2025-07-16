@@ -26,7 +26,7 @@ local defaultButtons = {
 
 -- GUI Setup
 local gui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
-gui.Name = "AutoClickerGUI"
+gui.Name = "BoogyManMenu"
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 gui.ResetOnSpawn = false
 
