@@ -9,7 +9,7 @@ gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 gui.ResetOnSpawn = false
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 150, 0, 130)
+frame.Size = UDim2.new(0, 150, 0, 160) -- Increased height for toggle button
 frame.Position = UDim2.new(0.5, -160, 0.5, -135)
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.BorderSizePixel = 0
@@ -74,7 +74,11 @@ local ClickPosition = nil
 local isMinimized = false
 local originalSize = frame.Size
 
--- Utility
+-- Utility: Round function for 1 decimal place
+local function round(num, decimals)
+	return tonumber(string.format("%." .. (decimals or 1) .. "f", num))
+end
+
 local function formatInterval(value)
 	return string.format("%.1f", value)
 end
@@ -152,17 +156,31 @@ resetPositionButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 local positionLabel = Instance.new("TextLabel", content)
 positionLabel.Size = UDim2.new(1, -10, 0, 25)
 positionLabel.Position = UDim2.new(0, 5, 0, 65)
-positionLabel.Text = "🧭 X : 0, Y : 0"
+positionLabel.Text = "X : 0.0, Y : 0.0"
 positionLabel.TextSize = 10
 positionLabel.Font = Enum.Font.SourceSansBold
 positionLabel.TextColor3 = Color3.new(1, 1, 1)
 positionLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+
+-- New Toggle Button below positionLabel
+local toggleButton = Instance.new("TextButton", content)
+toggleButton.Size = UDim2.new(0, 140, 0, 25)
+toggleButton.Position = UDim2.new(0, 5, 0, 95)
+toggleButton.Text = "Toggle Clicking"
+toggleButton.TextSize = 12
+toggleButton.Font = Enum.Font.GothamBold
+toggleButton.TextColor3 = Color3.new(1, 1, 1)
+toggleButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+Instance.new("UICorner", toggleButton).CornerRadius = UDim.new(0, 6)
 
 -- Logic
 local function toggleClicking()
 	IsClicking = not IsClicking
 	statusValue.Text = IsClicking and "Active" or "Inactive"
 	statusCircle.BackgroundColor3 = IsClicking and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+	
+	-- Update toggle button text accordingly
+	toggleButton.Text = IsClicking and "Stop Clicking" or "Start Clicking"
 
 	if IsClicking then
 		task.wait(1)
@@ -177,27 +195,27 @@ local function toggleClicking()
 	end
 end
 
--- Toggle via touch on statusCircle only (no keyboard toggle)
+-- Optional debounce to prevent rapid toggling
+local toggleDebounce = false
 statusCircle.TouchTap:Connect(function()
+	if toggleDebounce then return end
+	toggleDebounce = true
 	toggleClicking()
+	task.delay(0.3, function()
+		toggleDebounce = false
+	end)
 end)
 
--- No keyboard toggle code
+toggleButton.TouchTap:Connect(function()
+	if toggleDebounce then return end
+	toggleDebounce = true
+	toggleClicking()
+	task.delay(0.3, function()
+		toggleDebounce = false
+	end)
+end)
 
--- Interval formatter (decimal only for < 1)
-local function round(num, decimals)
-	return tonumber(string.format("%." .. (decimals or 1) .. "f", num))
-end
-
-local function formatInterval(value)
-	if value < 1 then
-		return string.format("%.1f", value)
-	else
-		return tostring(math.floor(value))
-	end
-end
-
--- Increase logic
+-- Increase interval logic
 local function increaseInterval()
 	if Interval >= 0.1 and Interval < 0.9 then
 		Interval = round(Interval + 0.1, 1)
@@ -214,9 +232,9 @@ local function increaseInterval()
 	end
 end
 
--- Decrease logic
+-- Decrease interval logic
 local function decreaseInterval()
-	Interval = round(Interval, 1) -- round before comparing
+	Interval = round(Interval, 1)
 
 	if Interval == 60 then
 		Interval = 50.1
@@ -238,12 +256,12 @@ end
 -- Button bindings
 plusButton.TouchTap:Connect(function()
 	increaseInterval()
-	intervalLabel.Text = "⏱ Interval : " .. formatInterval(Interval)
+	intervalLabel.Text = "Interval : " .. formatInterval(Interval)
 end)
 
 minusButton.TouchTap:Connect(function()
 	decreaseInterval()
-	intervalLabel.Text = "⏱ Interval : " .. formatInterval(Interval)
+	intervalLabel.Text = "Interval : " .. formatInterval(Interval)
 end)
 
 selectPositionButton.TouchTap:Connect(function()
@@ -252,8 +270,8 @@ selectPositionButton.TouchTap:Connect(function()
 	conn = UserInputService.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.Touch then
 			ClickPosition = input.Position
-			positionLabel.Text = "🧭 X : " .. ClickPosition.X .. ", Y : " .. ClickPosition.Y
-			selectPositionButton.Text = "🎯 Select Position"
+			positionLabel.Text = "X : " .. round(ClickPosition.X, 1) .. ", Y : " .. round(ClickPosition.Y, 1)
+			selectPositionButton.Text = "Select Position"
 			conn:Disconnect()
 		end
 	end)
@@ -261,7 +279,7 @@ end)
 
 resetPositionButton.TouchTap:Connect(function()
 	ClickPosition = nil
-	positionLabel.Text = "🧭 X : 0, Y : 0"
+	positionLabel.Text = "X : 0.0, Y : 0.0"
 end)
 
 minimizeBtn.TouchTap:Connect(function()
