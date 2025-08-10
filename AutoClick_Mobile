@@ -9,177 +9,205 @@ gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 gui.ResetOnSpawn = false
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 320, 0, 250)
-frame.Position = UDim2.new(0.5, -160, 0.5, -125)
+frame.Size = UDim2.new(0, 220, 0, 180)
+frame.Position = UDim2.new(0.5, -110, 0.5, -90)
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.BorderSizePixel = 0
 frame.Active = true
 frame.Parent = gui
-
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 
--- Header
+-- Header (for dragging)
 local header = Instance.new("Frame")
 header.Name = "Header"
-header.Size = UDim2.new(1, 0, 0, 40)
+header.Size = UDim2.new(1, 0, 0, 30)
 header.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 header.BorderSizePixel = 0
 header.Parent = frame
-Instance.new("UICorner", header).CornerRadius = UDim.new(0, 16)
+Instance.new("UICorner", header).CornerRadius = UDim.new(0, 12)
 
 local title = Instance.new("TextLabel", header)
 title.Text = "💀 BoogyMan AutoClicker"
 title.Font = Enum.Font.GothamBold
-title.TextSize = 18
+title.TextSize = 14
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.TextColor3 = Color3.new(1, 1, 1)
 title.BackgroundTransparency = 1
-title.Size = UDim2.new(1, -80, 1, 0)
-title.Position = UDim2.new(0, 15, 0, 0)
+title.Size = UDim2.new(1, -60, 1, 0)
+title.Position = UDim2.new(0, 8, 0, 0)
 
--- Close Button
 local closeBtn = Instance.new("TextButton", header)
 closeBtn.Text = "X"
-closeBtn.Size = UDim2.new(0, 30, 0, 30)
-closeBtn.Position = UDim2.new(1, -40, 0.5, -15)
+closeBtn.Size = UDim2.new(0, 24, 0, 24)
+closeBtn.Position = UDim2.new(1, -30, 0.5, -12)
 closeBtn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
 closeBtn.TextColor3 = Color3.new(1, 1, 1)
 closeBtn.Font = Enum.Font.GothamBold
-closeBtn.TextSize = 20
+closeBtn.TextSize = 18
 Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(1, 0)
 
--- Minimize Button
 local minimizeBtn = Instance.new("TextButton", header)
 minimizeBtn.Text = "-"
-minimizeBtn.Size = UDim2.new(0, 30, 0, 30)
-minimizeBtn.Position = UDim2.new(1, -80, 0.5, -15)
+minimizeBtn.Size = UDim2.new(0, 24, 0, 24)
+minimizeBtn.Position = UDim2.new(1, -60, 0.5, -12)
 minimizeBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
 minimizeBtn.TextColor3 = Color3.new(1, 1, 1)
 minimizeBtn.Font = Enum.Font.GothamBold
-minimizeBtn.TextSize = 24
+minimizeBtn.TextSize = 22
 Instance.new("UICorner", minimizeBtn).CornerRadius = UDim.new(1, 0)
 
--- Content Frame
 local content = Instance.new("Frame", frame)
 content.Name = "Content"
-content.Position = UDim2.new(0, 0, 0, 40)
-content.Size = UDim2.new(1, 0, 1, -40)
+content.Position = UDim2.new(0, 0, 0, 30)
+content.Size = UDim2.new(1, 0, 1, -30)
 content.BackgroundTransparency = 1
 
--- Variables
 local IsClicking = false
 local Interval = 0.2
 local ClickPosition = nil
 local isMinimized = false
 local originalSize = frame.Size
 
--- Utility
 local function formatInterval(value)
     return string.format("%.1f", value)
 end
 
--- Status Label & Circle
 local statusLabel = Instance.new("TextLabel", content)
-statusLabel.Size = UDim2.new(0, 50, 0, 15)
-statusLabel.Position = UDim2.new(0, 15, 0, 10)
+statusLabel.Size = UDim2.new(0, 80, 0, 22)
+statusLabel.Position = UDim2.new(0, 10, 0, 8)
 statusLabel.Text = "📟 STATUS :"
-statusLabel.TextSize = 11
+statusLabel.TextSize = 14
 statusLabel.Font = Enum.Font.SourceSansBold
 statusLabel.TextColor3 = Color3.new(1, 1, 1)
 statusLabel.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 statusLabel.TextXAlignment = Enum.TextXAlignment.Left
 
 local statusValue = Instance.new("TextLabel", content)
-statusValue.Size = UDim2.new(0, 90, 0, 30)
-statusValue.Position = UDim2.new(0, 120, 0, 10)
+statusValue.Size = UDim2.new(0, 70, 0, 22)
+statusValue.Position = UDim2.new(0, 95, 0, 8)
 statusValue.Text = "Inactive"
-statusValue.TextSize = 17
+statusValue.TextSize = 14
 statusValue.Font = Enum.Font.SourceSansBold
 statusValue.TextColor3 = Color3.new(1, 1, 1)
 statusValue.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 
 local statusCircle = Instance.new("Frame", content)
-statusCircle.Size = UDim2.new(0, 70, 0, 70)
-statusCircle.Position = UDim2.new(0, 230, 0, 5)
+statusCircle.Size = UDim2.new(0, 50, 0, 50)
+statusCircle.Position = UDim2.new(0, 180, 0, 2)
 statusCircle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 Instance.new("UICorner", statusCircle).CornerRadius = UDim.new(1, 0)
 
--- Toggle Button (no keyboard, so button only)
 local toggleButton = Instance.new("TextButton", content)
-toggleButton.Size = UDim2.new(0, 200, 0, 50)
-toggleButton.Position = UDim2.new(0, 50, 0, 90)
+toggleButton.Size = UDim2.new(0, 160, 0, 40)
+toggleButton.Position = UDim2.new(0, 30, 0, 70)
 toggleButton.Text = "Toggle Clicking"
-toggleButton.TextSize = 22
+toggleButton.TextSize = 18
 toggleButton.Font = Enum.Font.GothamBold
 toggleButton.TextColor3 = Color3.new(1, 1, 1)
 toggleButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-Instance.new("UICorner", toggleButton).CornerRadius = UDim.new(0, 12)
+Instance.new("UICorner", toggleButton).CornerRadius = UDim.new(0, 10)
 
--- Interval Controls (increase / decrease)
 local plusButton = Instance.new("TextButton", content)
-plusButton.Size = UDim2.new(0, 70, 0, 50)
-plusButton.Position = UDim2.new(0, 50, 0, 160)
+plusButton.Size = UDim2.new(0, 50, 0, 40)
+plusButton.Position = UDim2.new(0, 30, 0, 120)
 plusButton.Text = "+"
-plusButton.TextSize = 36
+plusButton.TextSize = 28
 plusButton.Font = Enum.Font.GothamBold
 plusButton.TextColor3 = Color3.new(1, 1, 1)
 plusButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-Instance.new("UICorner", plusButton).CornerRadius = UDim.new(0, 12)
+Instance.new("UICorner", plusButton).CornerRadius = UDim.new(0, 10)
 
 local intervalLabel = Instance.new("TextLabel", content)
-intervalLabel.Size = UDim2.new(0, 150, 0, 50)
-intervalLabel.Position = UDim2.new(0, 130, 0, 160)
+intervalLabel.Size = UDim2.new(0, 110, 0, 40)
+intervalLabel.Position = UDim2.new(0, 90, 0, 120)
 intervalLabel.Text = "⏱ Interval : " .. formatInterval(Interval)
-intervalLabel.TextSize = 22
+intervalLabel.TextSize = 16
 intervalLabel.Font = Enum.Font.SourceSansBold
 intervalLabel.TextColor3 = Color3.new(1, 1, 1)
 intervalLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 intervalLabel.TextXAlignment = Enum.TextXAlignment.Center
-Instance.new("UICorner", intervalLabel).CornerRadius = UDim.new(0, 12)
+Instance.new("UICorner", intervalLabel).CornerRadius = UDim.new(0, 10)
 
 local minusButton = Instance.new("TextButton", content)
-minusButton.Size = UDim2.new(0, 70, 0, 50)
-minusButton.Position = UDim2.new(0, 290, 0, 160)
+minusButton.Size = UDim2.new(0, 50, 0, 40)
+minusButton.Position = UDim2.new(0, 205, 0, 120)
 minusButton.Text = "-"
-minusButton.TextSize = 36
+minusButton.TextSize = 28
 minusButton.Font = Enum.Font.GothamBold
 minusButton.TextColor3 = Color3.new(1, 1, 1)
 minusButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-Instance.new("UICorner", minusButton).CornerRadius = UDim.new(0, 12)
+Instance.new("UICorner", minusButton).CornerRadius = UDim.new(0, 10)
 
--- Position select / reset buttons (larger for touch)
 local selectPositionButton = Instance.new("TextButton", content)
-selectPositionButton.Size = UDim2.new(0, 180, 0, 50)
-selectPositionButton.Position = UDim2.new(0, 50, 0, 230)
+selectPositionButton.Size = UDim2.new(0, 120, 0, 35)
+selectPositionButton.Position = UDim2.new(0, 30, 0, 165)
 selectPositionButton.Text = "🎯 Select Position"
-selectPositionButton.TextSize = 20
+selectPositionButton.TextSize = 14
 selectPositionButton.Font = Enum.Font.SourceSansBold
 selectPositionButton.TextColor3 = Color3.new(1, 1, 1)
 selectPositionButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-Instance.new("UICorner", selectPositionButton).CornerRadius = UDim.new(0, 12)
+Instance.new("UICorner", selectPositionButton).CornerRadius = UDim.new(0, 10)
 
 local resetPositionButton = Instance.new("TextButton", content)
-resetPositionButton.Size = UDim2.new(0, 180, 0, 50)
-resetPositionButton.Position = UDim2.new(0, 240, 0, 230)
+resetPositionButton.Size = UDim2.new(0, 120, 0, 35)
+resetPositionButton.Position = UDim2.new(0, 150, 0, 165)
 resetPositionButton.Text = "♻️ Reset Position"
-resetPositionButton.TextSize = 20
+resetPositionButton.TextSize = 14
 resetPositionButton.Font = Enum.Font.SourceSansBold
 resetPositionButton.TextColor3 = Color3.new(1, 1, 1)
 resetPositionButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-Instance.new("UICorner", resetPositionButton).CornerRadius = UDim.new(0, 12)
+Instance.new("UICorner", resetPositionButton).CornerRadius = UDim.new(0, 10)
 
 local positionLabel = Instance.new("TextLabel", content)
-positionLabel.Size = UDim2.new(1, -30, 0, 35)
-positionLabel.Position = UDim2.new(0, 15, 0, 290)
+positionLabel.Size = UDim2.new(1, -20, 0, 30)
+positionLabel.Position = UDim2.new(0, 10, 0, 205)
 positionLabel.Text = "🧭 X : 0, Y : 0"
-positionLabel.TextSize = 20
+positionLabel.TextSize = 14
 positionLabel.Font = Enum.Font.SourceSansBold
 positionLabel.TextColor3 = Color3.new(1, 1, 1)
 positionLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 positionLabel.TextXAlignment = Enum.TextXAlignment.Center
-Instance.new("UICorner", positionLabel).CornerRadius = UDim.new(0, 12)
+Instance.new("UICorner", positionLabel).CornerRadius = UDim.new(0, 10)
 
--- Logic
+-- Dragging logic for mobile
+local dragging = false
+local dragInput
+local dragStart
+local startPos
+
+header.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+header.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(
+            math.clamp(startPos.X.Scale, 0, 1),
+            math.clamp(startPos.X.Offset + delta.X, 0, workspace.CurrentCamera.ViewportSize.X - frame.AbsoluteSize.X),
+            math.clamp(startPos.Y.Scale, 0, 1),
+            math.clamp(startPos.Y.Offset + delta.Y, 0, workspace.CurrentCamera.ViewportSize.Y - frame.AbsoluteSize.Y)
+        )
+    end
+end)
+
+-- Toggle clicking logic
 local function toggleClicking()
     IsClicking = not IsClicking
     statusValue.Text = IsClicking and "Active" or "Inactive"
@@ -190,7 +218,6 @@ local function toggleClicking()
         spawn(function()
             while IsClicking do
                 local pos = ClickPosition or UserInputService:GetMouseLocation()
-                -- On mobile, we can try the same SendMouseButtonEvent
                 VirtualInputManager:SendMouseButtonEvent(pos.X, pos.Y, 0, true, game, 1)
                 VirtualInputManager:SendMouseButtonEvent(pos.X, pos.Y, 0, false, game, 1)
                 task.wait(Interval)
