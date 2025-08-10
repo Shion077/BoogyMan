@@ -80,7 +80,7 @@ end
 
 -- Status Label & Circle
 local statusLabel = Instance.new("TextLabel", content)
-statusLabel.Size = UDim2.new(0, 100, 0, 30)
+statusLabel.Size = UDim2.new(0, 50, 0, 15)
 statusLabel.Position = UDim2.new(0, 15, 0, 10)
 statusLabel.Text = "📟 STATUS :"
 statusLabel.TextSize = 17
