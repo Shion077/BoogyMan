@@ -5,7 +5,7 @@ local LocalPlayer = Players.LocalPlayer
 -- GUI Setup
 local boostRemote = ReplicatedStorage:WaitForChild("Activate Server Boost")
 local gui = Instance.new("ScreenGui")
-gui.Name = "Boost"
+gui.Name = "PSXO Boost"
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 gui.ResetOnSpawn = false
 gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
