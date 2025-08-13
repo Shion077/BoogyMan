@@ -23,7 +23,7 @@ local EggRemote = ReplicatedStorage:WaitForChild("Buy Egg")
 -- Config
 local EggToHatch = "Fire Dominus Egg"
 local TripleHatch = false
-local OctupleHatch = false
+local OctupleHatch = true
 
 -- States
 local AutoHatch = false
