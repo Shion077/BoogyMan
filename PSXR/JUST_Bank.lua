@@ -14,7 +14,8 @@ local GetBank = Workspace.__THINGS.__REMOTES["get my banks"]
 -- INLINE BANK IDs (Name + ID)
 -- ======================================================
 local MyBankIDs = {
-    {"Shion",   "bank-29b334c2d55145b5a40b21551622f0db"}
+    {"Shion",   "bank-e83fd3510c004c81a7c81adeafc396f3"},
+    {"Dm_Machine",   "bank-fb2ed956005b49ab8799f4187fc7515c"}
 }
 
 -- ======================================================
@@ -349,3 +350,4 @@ closeBtn.MouseButton1Click:Connect(function()
 end)
 
 print("✅ BoogyMan Bank UI Loaded with Multi-Pet Support & Case-Sensitive 3-Mode Deposit & Withdraw")
+
