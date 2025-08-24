@@ -66,7 +66,7 @@ local function Deposit(bankId, petNamesStr)
     local inv = Library.Save.Get().Pets
     if not inv then warn("⚠️ No pets in inventory") return end
     local uids = petNamesStr and petNamesStr ~= "" and GetUIDsFromNames(inv, petNamesStr) or {}
-    if #uids > 600 then uids = {table.unpack(uids, 1, 600)} end
+    if #uids > 700 then uids = {table.unpack(uids, 1, 700)} end
 
     if #uids > 0 then
         BankDeposit:InvokeServer({bankId, uids, FIXED_DIAMOND})
@@ -220,5 +220,6 @@ closeBtn.MouseButton1Click:Connect(function()
 end)
 
 print("✅ PSXO Bank GUI Loaded with ReverseDupe & Dupe Buttons (10B Diamonds Fixed)")
+
 
 
