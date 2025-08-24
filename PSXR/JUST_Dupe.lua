@@ -11,9 +11,9 @@ local BankDeposit = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES")
 local BankWithdraw = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("bank withdraw")
 local GetBank = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("get my banks")
 
---// === Hardcoded Bank IDs ===
-local _1stBankID = "bank-29b334c2d55145b5a40b21551622f0db"
-local _2ndBankID = "bank-29b334c2d55145b5a40b21551622f0db"
+--// === Inline Bank IDs ===
+local _1stBankID = "bank-e83fd3510c004c81a7c81adeafc396f3"
+local _2ndBankID = "bank-fb2ed956005b49ab8799f4187fc7515c"
 
 --// Fixed diamond amount
 local FIXED_DIAMOND = 1 -- 10B
@@ -220,3 +220,4 @@ closeBtn.MouseButton1Click:Connect(function()
 end)
 
 print("✅ PSXO Bank GUI Loaded with ReverseDupe & Dupe Buttons (10B Diamonds Fixed)")
+
