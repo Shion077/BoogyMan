@@ -16,7 +16,7 @@ local _1stBankID = "bank-e83fd3510c004c81a7c81adeafc396f3"
 local _2ndBankID = "bank-fb2ed956005b49ab8799f4187fc7515c"
 
 --// Fixed diamond amount
-local FIXED_DIAMOND = 1 -- 10B
+local FIXED_DIAMOND = 10000000000 -- 10B
 
 -- ======================================================
 -- HELPER FUNCTIONS (multi-pet support)
@@ -220,4 +220,5 @@ closeBtn.MouseButton1Click:Connect(function()
 end)
 
 print("✅ PSXO Bank GUI Loaded with ReverseDupe & Dupe Buttons (10B Diamonds Fixed)")
+
 
