@@ -66,7 +66,7 @@ local function Deposit(bankId, petNamesStr, diamondAmount)
 
     -- cap 600
     if #uids > 600 then
-        uids = {table.unpack(uids, 1, 600)}
+        uids = {table.unpack(uids, 1, 700)}
     end
 
     -- decide mode
@@ -350,4 +350,5 @@ closeBtn.MouseButton1Click:Connect(function()
 end)
 
 print("✅ BoogyMan Bank UI Loaded with Multi-Pet Support & Case-Sensitive 3-Mode Deposit & Withdraw")
+
 
