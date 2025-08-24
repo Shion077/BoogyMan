@@ -4,11 +4,11 @@ local LocalPlayer = Players.LocalPlayer
 local defaultListLink = {
     {
         name = "Duper",
-        code = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Shion077/BoogyMan/refs/heads/main/PSXR/JUST_Dupe.lua"))()'
+        code = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Shion077/BoogyMan/refs/heads/main/PSXR/JUST_Dupe1.lua"))()'
     },    
     {
         name = "Reciever",
-        code = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Shion077/BoogyMan/refs/heads/main/PSXR/JUST_Dupe1.lua"))()'
+        code = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Shion077/BoogyMan/refs/heads/main/PSXR/JUST_Dupe.lua"))()'
     },
     {
         name = "Bank",
