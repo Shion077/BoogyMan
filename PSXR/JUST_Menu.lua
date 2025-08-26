@@ -21,6 +21,10 @@ local defaultListLink = {
     {
         name = "Pet Delete",
         code = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Shion077/BoogyMan/refs/heads/main/PSXR/JUST_PetDelete.lua"))()'
+    }, 
+    {
+        name = "Pet Fuse",
+        code = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Shion077/BoogyMan/refs/heads/main/PSXR/JUST_PetFuse.lua"))()'
     }
 }
 
