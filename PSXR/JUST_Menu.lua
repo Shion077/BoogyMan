@@ -17,6 +17,10 @@ local defaultListLink = {
     {
         name = "Egg Opener",
         code = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Shion077/BoogyMan/refs/heads/main/PSXR/JUST_EggOpener.lua"))()'
+    }, 
+    {
+        name = "Pet Delete",
+        code = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Shion077/BoogyMan/refs/heads/main/PSXR/JUST_PetDelete.lua"))()'
     }
 }
 
