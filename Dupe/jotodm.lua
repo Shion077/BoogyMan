@@ -10,7 +10,7 @@ local BankWithdraw = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"
 
 
 --// CONFIG
-local STORRBANK_ID = "bank-fb2ed956005b49ab8799f4187fc7515c"
+local STOREBANK_ID = "bank-fb2ed956005b49ab8799f4187fc7515c"
 local GEMSBANK_ID = "bank-9f6802eb4b0c4cba929e9cc7e9b871d3"
 local FIXED_DIAMOND = 10000000000
 
