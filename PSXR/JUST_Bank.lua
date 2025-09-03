@@ -1,3 +1,4 @@
+
 --// Services
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -16,8 +17,7 @@ local GetBank = Workspace.__THINGS.__REMOTES["get my banks"]
 local MyBankIDs = {
     {"Shion",   "bank-e83fd3510c004c81a7c81adeafc396f3"},
     {"Dm_Machine",   "bank-fb2ed956005b49ab8799f4187fc7515c"},
-    {"Think",   "bank-2d6afacf3d814071aee6fc59bb22f2few"}
-
+    {"Think",   "bank-2d6afacf3d814071aee6fc59bb22f2fe"}
 }
 
 -- ======================================================
@@ -39,19 +39,32 @@ local function GetUIDsFromNames(petsList, petNamesStr)
     local uids = {}
     for petName in string.gmatch(petNamesStr, '([^,]+)') do
         petName = petName:gsub("^%s*(.-)%s*$", "%1") -- trim spaces
-        local petId = FindPetIdByName(petName)
-        if petId then
-            for _, pet in pairs(petsList) do
-                if pet.id == petId and pet.uid then
-                    table.insert(uids, pet.uid)
-                end
+        local lowerName = string.lower(petName)
+
+        for uid, pet in pairs(petsList) do
+            local realUID = uid
+            if typeof(uid) == "number" and pet.uid then
+                -- inventory-style
+                realUID = pet.uid
             end
-        else
-            warn("⚠️ Pet not found in directory:", petName)
+
+            -- Try to resolve via Pets
+            local petData = Library.Directory.Pets[pet.id]
+            -- Try to resolve via Eggs if not a pet
+            if not petData then
+                petData = Library.Directory.Eggs and Library.Directory.Eggs[pet.id]
+            end
+
+            local displayName = petData and petData.name
+            if displayName and string.lower(displayName) == lowerName then
+                table.insert(uids, realUID)
+                print("✅ Matched:", displayName, "→ UID:", realUID)
+            end
         end
     end
     return uids
 end
+
 
 -- ======================================================
 -- DEPOSIT (Pets+Diamonds / Pets only / Diamonds only)
@@ -67,7 +80,7 @@ local function Deposit(bankId, petNamesStr, diamondAmount)
     local uids = petNamesStr and petNamesStr ~= "" and GetUIDsFromNames(inv, petNamesStr) or {}
 
     -- cap 600
-    if #uids > 600 then
+    if #uids > 700 then
         uids = {table.unpack(uids, 1, 700)}
     end
 
@@ -123,8 +136,16 @@ local function Withdraw(bankId, petNamesStr, diamondAmount)
         return
     end
 
+    -- 🔎 DEBUG: Show all pets inside the bank
+    print("🔎 Bank Pets Raw:", bankData.Storage.Pets)
+    for k,v in pairs(bankData.Storage.Pets) do
+        local petName = (Library.Directory.Pets[v.id] and Library.Directory.Pets[v.id].name) or "Unknown"
+        print("  UID:", k, " → ID:", v.id, " Name:", petName)
+    end
+
     -- collect UIDs
-    local uids = petNamesStr and petNamesStr ~= "" and GetUIDsFromNames(bankData.Storage.Pets, petNamesStr) or {}
+    local uids = petNamesStr and petNamesStr ~= "" 
+        and GetUIDsFromNames(bankData.Storage.Pets, petNamesStr) or {}
 
     -- cap 700
     if #uids > 700 then
@@ -148,6 +169,7 @@ local function Withdraw(bankId, petNamesStr, diamondAmount)
         warn("❌ Nothing valid to withdraw")
     end
 end
+
 
 -- ======================================================
 -- 💀 GUI Setup (BoogyMan Menu)
@@ -352,4 +374,3 @@ closeBtn.MouseButton1Click:Connect(function()
 end)
 
 print("✅ BoogyMan Bank UI Loaded with Multi-Pet Support & Case-Sensitive 3-Mode Deposit & Withdraw")
-
