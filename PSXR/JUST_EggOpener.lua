@@ -62,7 +62,7 @@ gui.ResetOnSpawn = false
 
 -- Main Frame
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 120, 0, 105)
+frame.Size = UDim2.new(0, 120, 0, 130)
 frame.Position = UDim2.new(0.5, -160, 0.5, -135)
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.BorderSizePixel = 0
@@ -165,30 +165,62 @@ local amountCorner = Instance.new("UICorner")
 amountCorner.CornerRadius = UDim.new(0,6)
 amountCorner.Parent = amountBox
 
--- Open Egg Button
-local openButton = Instance.new("TextButton", content)
-openButton.Size = UDim2.new(0, 100, 0, 20)
-openButton.Position = UDim2.new(0, 10, 0, 45)
-openButton.Text = "Open Egg"
-openButton.TextColor3 = Color3.fromRGB(255,255,255)
-openButton.BackgroundColor3 = Color3.fromRGB(40, 120, 40)
-openButton.Font = Enum.Font.GothamBold
-openButton.TextSize = 14
+-- Status Label
+local statusLabel = Instance.new("TextLabel", content)
+statusLabel.Size = UDim2.new(0, 100, 0, 20)
+statusLabel.Position = UDim2.new(0, 10, 0, 45)
+statusLabel.Text = "STATUS : OFF"
+statusLabel.TextSize = 11
+statusLabel.Font = Enum.Font.SourceSansBold
+statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+statusLabel.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+
+-- Switch Button (replaces Open Egg Button)
+local SwitchBtn = Instance.new("TextButton", content)
+SwitchBtn.Size = UDim2.new(0, 100, 0, 20)
+SwitchBtn.Position = UDim2.new(0, 10, 0, 70)
+SwitchBtn.Font = Enum.Font.GothamBold
+SwitchBtn.TextSize = 14
+SwitchBtn.TextColor3 = Color3.fromRGB(255,255,255)
 
 local buttonCorner = Instance.new("UICorner")
 buttonCorner.CornerRadius = UDim.new(0,6)
-buttonCorner.Parent = openButton
+buttonCorner.Parent = SwitchBtn
 
--- Button Functionality
-openButton.MouseButton1Click:Connect(function()
-    local eggName = eggNameBox.Text
-    local amount = tonumber(amountBox.Text)
-    if eggName ~= "" and amount and amount > 0 then
-        AutoOpenEgg(eggName, amount)
+-- Auto toggle logic
+local autoRunning = false
+
+local function updateButtonUI()
+    if autoRunning then
+        SwitchBtn.Text = "Stop"
+        statusLabel.Text = "STATUS : ON"
+        SwitchBtn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
     else
-        warn("❌ Please enter a valid egg name and amount!")
+        SwitchBtn.Text = "Start"
+        statusLabel.Text = "STATUS : OFF"
+        SwitchBtn.BackgroundColor3 = Color3.fromRGB(40, 120, 40)
+    end
+end
+updateButtonUI()
+
+-- Switch functionality
+SwitchBtn.MouseButton1Click:Connect(function()
+    autoRunning = not autoRunning
+    updateButtonUI()
+    if autoRunning then
+        task.spawn(function()
+            while autoRunning do
+                local eggName = eggNameBox.Text
+                local amount = tonumber(amountBox.Text)
+                if eggName ~= "" and amount and amount > 0 then
+                    AutoOpenEgg(eggName, amount)
+                end
+                task.wait(0.5) -- adjust delay between openings
+            end
+        end)
     end
 end)
+
 
 -- Minimize Function
 local isMinimized = false
