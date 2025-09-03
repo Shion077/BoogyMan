@@ -215,7 +215,7 @@ SwitchBtn.MouseButton1Click:Connect(function()
                 if eggName ~= "" and amount and amount > 0 then
                     AutoOpenEgg(eggName, amount)
                 end
-                task.wait(0.5) -- adjust delay between openings
+                task.wait(0.1) -- adjust delay between openings
             end
         end)
     end
@@ -243,3 +243,4 @@ end)
 closeBtn.MouseButton1Click:Connect(function()
 	gui:Destroy()
 end)
+
