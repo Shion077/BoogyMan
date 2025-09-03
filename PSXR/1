@@ -16,7 +16,7 @@ local GetBank = Workspace.__THINGS.__REMOTES["get my banks"]
 local MyBankIDs = {
     {"Shion",   "bank-e83fd3510c004c81a7c81adeafc396f3"},
     {"Dm_Machine",   "bank-fb2ed956005b49ab8799f4187fc7515c"},
-    {"Think",   "bank-2d6afacf3d814071aee6fc59bb22f2few"}
+    {"Think",   "bank-2d6afacf3d814071aee6fc59bb22f2fe"}
 
 }
 
