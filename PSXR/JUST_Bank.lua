@@ -15,7 +15,9 @@ local GetBank = Workspace.__THINGS.__REMOTES["get my banks"]
 -- ======================================================
 local MyBankIDs = {
     {"Shion",   "bank-e83fd3510c004c81a7c81adeafc396f3"},
-    {"Dm_Machine",   "bank-fb2ed956005b49ab8799f4187fc7515c"}
+    {"Dm_Machine",   "bank-fb2ed956005b49ab8799f4187fc7515c"},
+    {"Think",   "bank-2d6afacf3d814071aee6fc59bb22f2few"}
+
 }
 
 -- ======================================================
@@ -223,7 +225,7 @@ PetNameBox.Position = UDim2.new(0, 10, 0, 20)
 PetNameBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 PetNameBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 PetNameBox.PlaceholderText = "Pet Name"
-PetNameBox.Text = ""
+PetNameBox.Text = "Exclusive Pixel Egg"
 PetNameBox.TextSize = 11
 PetNameBox.BorderSizePixel = 0
 
@@ -233,7 +235,7 @@ DiamondBox.Position = UDim2.new(0, 10, 0, 45)
 DiamondBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 DiamondBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 DiamondBox.PlaceholderText = "Diamond"
-DiamondBox.Text = "10000000000"
+DiamondBox.Text = "20000000000"
 DiamondBox.TextSize = 11
 DiamondBox.BorderSizePixel = 0
 
@@ -350,5 +352,4 @@ closeBtn.MouseButton1Click:Connect(function()
 end)
 
 print("✅ BoogyMan Bank UI Loaded with Multi-Pet Support & Case-Sensitive 3-Mode Deposit & Withdraw")
-
 
