@@ -1,0 +1,292 @@
+--// Services
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local LocalPlayer = Players.LocalPlayer
+local HttpService = game:GetService("HttpService")
+
+--// Remotes
+local Buy100Egg = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("purchase exclusive egg 2")
+local openEgg = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("exclusive eggs: open")
+local BankWithdraw = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("bank withdraw")
+local DeletePetsRemote = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("delete several pets") 
+local DeleteEggAnim = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("exclusive eggs: animation")
+
+--// Library
+local Library = require(ReplicatedStorage:WaitForChild("Library"))
+
+--// CONFIG
+local eggName = "Exclusive Cat Egg"
+local NoOfToOpen = 8
+local TARGET_NAMES = { "Rich Cat", "Helicopter Cat", "Hoverboard Cat"}
+local GEMSBANK_ID = "bank-a9261f8341144fb1ad5ac5a9e970f5e5"
+local FIXED_DIAMOND = 19000000000
+local positions = {
+    Vector3.new(0, 0, 0),
+    Vector3.new(0, 0, 0),
+    Vector3.new(0, 0, 0),
+    Vector3.new(0, 0, 0),
+    Vector3.new(0, 0, 0),
+    Vector3.new(0, 0, 0),
+    Vector3.new(0, 0, 0),
+    Vector3.new(0, 0, 0),
+}
+
+-- ======================================================
+-- GUI SETUP
+-- ======================================================
+local gui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
+gui.Name = "Afk Hatch"
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+gui.ResetOnSpawn = false
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 120, 0, 80)
+frame.Position = UDim2.new(0.5, -160, 0.5, -135)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+frame.Parent = gui
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 8)
+
+-- Header
+local header = Instance.new("Frame", frame)
+header.Name = "Header"
+header.Size = UDim2.new(1, 0, 0, 20)
+header.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Instance.new("UICorner", header).CornerRadius = UDim.new(0, 12)
+
+local title = Instance.new("TextLabel", header)
+title.Text = "💀Afk Hatch"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 10
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Size = UDim2.new(1, -60, 1, 0)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.BackgroundTransparency = 1
+
+-- Close & Minimize
+local closeBtn = Instance.new("TextButton", header)
+closeBtn.Text = "X"
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextSize = 14
+closeBtn.Size = UDim2.new(0, 15, 0, 15)
+closeBtn.Position = UDim2.new(0, 100, 0, 2)
+closeBtn.BackgroundColor3 = Color3.fromRGB(180,50,50)
+closeBtn.TextColor3 = Color3.fromRGB(255,255,255)
+Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(1,0)
+
+local minimizeBtn = Instance.new("TextButton", header)
+minimizeBtn.Text = "-"
+minimizeBtn.Font = Enum.Font.GothamBold
+minimizeBtn.TextSize = 18
+minimizeBtn.Size = UDim2.new(0,15,0,15)
+minimizeBtn.Position = UDim2.new(0,82,0,2)
+minimizeBtn.BackgroundColor3 = Color3.fromRGB(70,70,70)
+minimizeBtn.TextColor3 = Color3.fromRGB(255,255,255)
+Instance.new("UICorner", minimizeBtn).CornerRadius = UDim.new(1,0)
+
+-- Content
+local content = Instance.new("Frame", frame)
+content.Name = "Content"
+content.Position = UDim2.new(0,0,0,30)
+content.Size = UDim2.new(1,0,1,-30)
+content.BackgroundTransparency = 1
+
+local statusLabel = Instance.new("TextLabel", content)
+statusLabel.Size = UDim2.new(0, 100, 0, 20)
+statusLabel.Position = UDim2.new(0, 10, 0, -5)
+statusLabel.Text = "STATUS : OFF"
+statusLabel.TextSize = 11
+statusLabel.Font = Enum.Font.SourceSansBold
+statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+statusLabel.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+
+local SwitchFuseBtn = Instance.new("TextButton", content)
+SwitchFuseBtn.Size = UDim2.new(0, 100, 0, 20)
+SwitchFuseBtn.Position = UDim2.new(0, 10, 0, 20)
+SwitchFuseBtn.TextSize = 11
+SwitchFuseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+SwitchFuseBtn.BorderSizePixel = 0
+Instance.new("UICorner", SwitchFuseBtn).CornerRadius = UDim.new(0, 6)
+
+-- ======================================================
+-- Variables & Helpers
+-- ======================================================
+local autoRunning = false
+
+local function updateButtonUI()
+    if autoRunning then
+        SwitchFuseBtn.Text = "Stop"
+        statusLabel.Text = "STATUS : ON"
+        SwitchFuseBtn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+    else
+        SwitchFuseBtn.Text = "Start"
+        statusLabel.Text = "STATUS : OFF"
+        SwitchFuseBtn.BackgroundColor3 = Color3.fromRGB(40, 120, 40)
+    end
+end
+updateButtonUI()
+
+-- ======================================================
+-- Helpers
+-- ======================================================
+local function FindPetIdByName(displayName)
+    for petId, petData in pairs(Library.Directory.Pets) do
+        if petData.name and petData.name == displayName then
+            return petId
+        end
+    end
+    return nil
+end
+
+-- ======================================================
+-- Delete Pipeline (Auto Target Pets)
+-- ======================================================
+local function DeletePipeline()
+    while autoRunning do
+        local save = Library.Save.Get()
+        if save and save.Pets then
+            local pets = save.Pets
+
+            if typeof(pets) == "string" then
+                local success, decoded = pcall(function()
+                    return HttpService:JSONDecode(pets)
+                end)
+                if success and decoded then
+                    pets = decoded
+                else
+                    warn("⚠️ Failed to decode Pets data")
+                    pets = {}
+                end
+            end
+
+            local uids = {}
+            for _, targetName in ipairs(TARGET_NAMES) do
+                local petId = FindPetIdByName(targetName)
+                if petId then
+                    for _, pet in pairs(pets) do
+                        if pet.id == petId and pet.uid then
+                            table.insert(uids, pet.uid)
+                        end
+                    end
+                else
+                    warn("⚠️ Pet not found in directory:", targetName)
+                end
+            end
+
+            if #uids > 0 then
+                DeletePetsRemote:InvokeServer({uids})
+                print("💀 Deleted target pets:", table.concat(uids, ", "))
+            end
+        end
+
+        task.wait(2)
+    end
+end
+
+-- ======================================================
+-- Bank Helpers
+-- ======================================================
+local function WithdrawDiamonds(bankId)
+    BankWithdraw:InvokeServer({ bankId, {}, FIXED_DIAMOND })
+end
+
+-- ======================================================
+-- Egg Pipeline (New)
+-- ======================================================
+-- Buy 400 Eggs (4x 100)
+local function Buy400Eggs()
+    for i = 1, 4 do
+        Buy100Egg:InvokeServer({100})
+        task.wait(0.3)
+    end
+end
+
+-- Open ALL available eggs (in 8-batches)
+local function AutoOpenEgg()
+    local save = Library.Save.Get()
+    if not save or not save.Pets then return end
+
+    local uids = {}
+    for _, pet in ipairs(save.Pets) do
+        local petData = Library.Directory.Pets[pet.id]
+        local pname = petData and petData.name:lower() or pet.id:lower()
+        if pname == eggName:lower() then
+            table.insert(uids, pet.uid)
+        end
+    end
+
+    -- open eggs in batches of 8 until all are consumed
+    for i = 1, #uids, NoOfToOpen do
+        local batch = {}
+        for j = i, math.min(i + NoOfToOpen - 1, #uids) do
+            table.insert(batch, uids[j])
+        end
+        if #batch > 0 then
+            openEgg:InvokeServer({batch[1], #batch, positions})
+            task.wait(0.1)
+        end
+    end
+end
+
+-- Egg Pipeline: Buy 400 → Open all → Repeat
+local function EggPipeline()
+    while autoRunning do
+        -- Withdraw gems for one cycle
+        WithdrawDiamonds(GEMSBANK_ID)
+        task.wait(0.3)
+
+        -- Buy 400 eggs
+        Buy400Eggs()
+        task.wait(0.3)
+
+        -- Open all 400 (8 at a time → 50 loops)
+        AutoOpenEgg()
+        task.wait(0.3)
+
+        -- (loop continues for next 400)
+        task.wait(1)
+    end
+end
+
+-- ======================================================
+-- Remove Animation
+-- ======================================================
+DeleteEggAnim:destroy() 
+
+-- ======================================================
+-- Button Events
+-- ======================================================
+SwitchFuseBtn.MouseButton1Click:Connect(function()
+    autoRunning = not autoRunning
+    updateButtonUI()
+    if autoRunning then
+        task.spawn(EggPipeline)
+        task.spawn(DeletePipeline)
+    end
+end)
+
+-- Minimize
+local isMinimized = false
+local originalSize = frame.Size
+minimizeBtn.MouseButton1Click:Connect(function()
+    isMinimized = not isMinimized
+    if isMinimized then
+        content.Visible = false
+        frame.Size = UDim2.new(originalSize.X.Scale, originalSize.X.Offset, 0, header.Size.Y.Offset)
+        minimizeBtn.Text = "+"
+    else
+        content.Visible = true
+        frame.Size = originalSize
+        minimizeBtn.Text = "-"
+    end
+end)
+
+-- Close
+closeBtn.MouseButton1Click:Connect(function()
+    gui:Destroy()
+    autoRunning = false
+end)
