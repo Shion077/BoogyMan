@@ -12,9 +12,8 @@ local Enchant = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):Wai
 -- ======================================================
 -- CONFIG (hardcoded)
 -- ======================================================
-local DesirePetId = "219999"               -- target pet ID (string!)
+local DesirePetId = "404"               -- target pet ID (string!)
 local DesireEnchantType = "Rainbow Coins"  -- enchant type
-local AUTO_ENCHANT = true                  -- toggle on/off
 
 -- ======================================================
 -- HELPER: Check if pet already has desired enchant
@@ -83,3 +82,5 @@ task.spawn(function()
         task.wait(5) -- loop delay
     end
 end)
+
+local AUTO_ENCHANT = true                  -- toggle on/off
