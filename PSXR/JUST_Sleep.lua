@@ -3,12 +3,7 @@ local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LocalPlayer = Players.LocalPlayer
-
---// Remotes
-local FuseToGold = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("use golden machine")
-local FuseToRainbow = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("use rainbow machine")
-local ConvertDM = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("convert to dark matter")
-local GetDarkmatter = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("redeem dark matter pet")
+local HttpService = game:GetService("HttpService")
 
 local Buy100Egg = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("purchase exclusive egg 2")
 local openEgg = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("exclusive eggs: open")
@@ -16,12 +11,14 @@ local openEgg = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):Wai
 local BankDeposit = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("bank deposit")
 local BankWithdraw = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("bank withdraw")
 
+local DeletePetsRemote = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("delete several pets") 
+
 --// Library
 local Library = require(ReplicatedStorage:WaitForChild("Library"))
 
 --// CONFIG
-local eggName = "Exclusive Pumpkin Egg"
-local NoOfToOpen = 25
+local eggName = "Exclusive Cat Egg"
+local NoOfToOpen = 8
 local TARGET_NAMES = { "DarkLord Ghoul Horse", "Evil Ghoul Horse" }
 local GEMSBANK_ID = "bank-fb2ed956005b49ab8799f4187fc7515c"
 local STOREBANK_ID = "bank-9f6802eb4b0c4cba929e9cc7e9b871d3"
@@ -174,69 +171,10 @@ local function CollectTargetPets()
     return petsByName
 end
 
--- Optimized FusePipeline for target pets only
-local function FusePipeline()
+-- Optimized DeletePipeline for target pets only
+local function DeletePipeline()
     while autoRunning do
-        local petsByName = CollectTargetPets()
-        local normal, gold, rainbow, dm = {}, {}, {}, {}
-
-        -- Split pets by rarity for only target pets
-        for name, uids in pairs(petsByName) do
-            for _, uid in ipairs(uids) do
-                local petInfo = GetPetByUID(uid)
-                if petInfo then
-                    if petInfo.dm then
-                        table.insert(dm, uid)
-                    elseif petInfo.r then
-                        table.insert(rainbow, uid)
-                    elseif petInfo.g then
-                        table.insert(gold, uid)
-                    else
-                        table.insert(normal, uid)
-                    end
-                end
-            end
-        end
-
-        -- Normal → Gold
-        while #normal >= 6 do
-            local batch = {unpack(normal, 1, 6)}
-            pcall(function() FuseToGold:InvokeServer({batch}) end)
-            task.wait(0.03)
-            normal = {unpack(normal, 7)}
-        end
-
-        -- Gold → Rainbow
-        while #gold >= 6 do
-            local batch = {unpack(gold, 1, 6)}
-            pcall(function() FuseToRainbow:InvokeServer({batch}) end)
-            task.wait(0.03)
-            gold = {unpack(gold, 7)}
-        end
-
-        -- Rainbow → DM
-        while #rainbow >= 5 do
-            local batch = {unpack(rainbow, 1, 5)}
-            pcall(function() ConvertDM:InvokeServer({batch}) end)
-            task.wait(0.03)
-            rainbow = {unpack(rainbow, 6)}
-        end
-
-        -- Redeem DM for pets using GUI queue
-        local holder = LocalPlayer.PlayerGui:FindFirstChild("DarkMatter")
-        if holder then
-            holder = holder.Frame.Queue.Holder
-            for _, fr in ipairs(holder:GetChildren()) do
-                if fr:IsA("Frame") then
-                    pcall(function()
-                        GetDarkmatter:InvokeServer({fr.Name})
-                    end)
-                end
-            end
-        end
-        task.wait(0.1)
-    end
-end
+        
 
 -- Bank
 local function WithdrawDiamonds(bankId)
@@ -258,8 +196,8 @@ local function DepositDarkMatter(bankId)
 end
 
 -- Egg Pipeline
-local function Buy600Eggs()
-    for i = 1, 6 do
+local function Buy400Eggs()
+    for i = 1, 4 do
         Buy100Egg:InvokeServer({100})
         task.wait(0.3)
     end
@@ -295,7 +233,7 @@ local function EggPipeline()
     while autoRunning do
         WithdrawDiamonds(GEMSBANK_ID)
         task.wait(0.5)
-        Buy600Eggs()
+        Buy400Eggs()
         AutoOpenEgg()
         DepositDarkMatter(STOREBANK_ID)
         task.wait(0.5)
@@ -308,7 +246,7 @@ SwitchFuseBtn.MouseButton1Click:Connect(function()
     updateButtonUI()
     if autoRunning then
         task.spawn(EggPipeline)
-        task.spawn(FusePipeline)
+        task.spawn(DeletePipeline)
     end
 end)
 
