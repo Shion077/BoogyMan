@@ -18,9 +18,9 @@ local Library = require(ReplicatedStorage:WaitForChild("Library"))
 --// CONFIG
 local eggName = "Exclusive Cat Egg"
 local NoOfToOpen = 8
-local GEMSBANK_ID = "bank-a9261f8341144fb1ad5ac5a9e970f5e5"
-local STORED_BANK = "BANKID"
-local FIXED_DIAMOND = 19000000000
+local GEMSBANK_ID = "bank-39eb990fbde44419a6437292f4884dd2"
+local STORED_BANK = "bank-39eb990fbde44419a6437292f4884dd2"
+local FIXED_DIAMOND = 19900000000
 
 -- Pets to deposit
 local DepositPet = {
