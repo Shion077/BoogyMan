@@ -12,6 +12,14 @@ local BankWithdraw = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"
 local BankDeposit = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("bank deposit")
 local DeleteEggAnim = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("exclusive eggs: animation")
 
+-- Immediately remove the animation when script executes
+pcall(function()
+    if DeleteEggAnim then
+        DeleteEggAnim:Destroy()
+        warn("✅ Egg animation removed")
+    end
+end)
+
 --// Library
 local Library = require(ReplicatedStorage:WaitForChild("Library"))
 
@@ -250,11 +258,6 @@ local function EggPipeline()
         task.wait(1)
     end
 end
-
--- ======================================================
--- Remove Animation
--- ======================================================
-DeleteEggAnim:Destroy()
 
 -- ======================================================
 -- Button Events
