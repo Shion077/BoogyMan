@@ -1,0 +1,8 @@
+local Workspace = game:GetService("Workspace")
+
+local BankDeposit = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("bank deposit")
+local STORED_BANK = "bank-39eb990fbde44419a6437292f4884dd2"
+local FIXED_DIAMOND = 19900000000
+local depositUids = {}
+
+BankDeposit:InvokeServer({ STORED_BANK, depositUids})
