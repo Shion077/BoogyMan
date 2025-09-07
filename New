@@ -199,7 +199,7 @@ local function DepositPipeline()
             end
 
             if #depositUids > 0 then
-                BankDeposit:InvokeServer({ STORED_BANK, depositUids })
+                BankDeposit:InvokeServer({ STORED_BANK, depositUids, 0 })
                 print("🏦 Deposited pets:", table.concat(depositUids, ", "))
             end
         end
