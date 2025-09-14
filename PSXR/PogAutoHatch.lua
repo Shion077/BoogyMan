@@ -17,28 +17,6 @@ local Library = require(ReplicatedStorage:WaitForChild("Library"))
 local Save = require(ReplicatedStorage:WaitForChild("Library"):WaitForChild("Client"):WaitForChild("Save"))
 
 -- =========================
--- 🎯 FIND CORRECT REMOTE (14th RemoteFunction)
--- =========================
-local count = 0
-local OpenEgg = nil
-
-for _, obj in ipairs(ReplicatedStorage:GetChildren()) do
-    if obj:IsA("RemoteFunction") then
-        count += 1
-        if count == 14 then
-            obj.Name = "BuyEgg"
-            OpenEgg = ReplicatedStorage:WaitForChild("BuyEgg")
-            print("🎯 Renamed RemoteFunction at index " .. count .. " → BuyEgg")
-            break
-        end
-    end
-end
-
-if not OpenEgg then
-    warn("❌ Failed to locate OpenEgg RemoteFunction (index 14 not found).")
-end
-
--- =========================
 -- ⚙️ CONFIG
 -- =========================
 local Eggname = "Pog Egg"
@@ -137,7 +115,6 @@ content.BackgroundTransparency = 1
 -- =========================
 -- UI Elements
 -- =========================
-
 local HatchstatusLabel = Instance.new("TextLabel", content)
 HatchstatusLabel.Size = UDim2.new(0, 52.5, 0, 20)
 HatchstatusLabel.Position = UDim2.new(0, 5, 0, -5)
@@ -186,25 +163,33 @@ SwitchBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 -- =========================
 -- 🎯 AUTO HATCH LOGIC
 -- =========================
-local function setStatus(active)
-    if active then
-        HatchstatusValue.Text = "Active"
-        HatchstatusValue.TextColor3 = Color3.fromRGB(50, 255, 50)
-        SwitchBtn.Text = "Turn Off"
-        SwitchBtn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
-    else
-        HatchstatusValue.Text = "Inactive"
-        HatchstatusValue.TextColor3 = Color3.fromRGB(255, 50, 50)
-        SwitchBtn.Text = "Turn On"
-        SwitchBtn.BackgroundColor3 = Color3.fromRGB(40, 120, 40)
+local function get14thRemote()
+    local count = 0
+    for _, obj in ipairs(ReplicatedStorage:GetChildren()) do
+        if obj:IsA("RemoteFunction") then
+            count += 1
+            if count == 14 then
+                return obj
+            end
+        end
     end
+    return nil
 end
 
 local function HatchEgg()
-    if not OpenEgg then return end -- safety
+    -- Either fixed index (20th child overall)
+    -- local OpenEgg = ReplicatedStorage:GetChildren()[20]
+
+    -- Or dynamic: always the 14th RemoteFunction
+    local OpenEgg = get14thRemote()
+
+    if not OpenEgg then
+        warn("❌ HatchEgg failed: RemoteFunction[14] not found.")
+        return
+    end
 
     local success, result = pcall(function()
-        return OpenEgg:InvokeServer(Eggname, NoOfEgg )
+        return OpenEgg:InvokeServer(Eggname, NoOfEgg)
     end)
 
     if not success then
@@ -221,14 +206,27 @@ local function HatchEgg()
 end
 
 -- =========================
--- 🔘 MASTER SWITCH LOGIC
+-- 🔘 STATUS & MASTER SWITCH
 -- =========================
+local function setStatus(active)
+    if active then
+        HatchstatusValue.Text = "Active"
+        HatchstatusValue.TextColor3 = Color3.fromRGB(50, 255, 50)
+        SwitchBtn.Text = "Turn Off"
+        SwitchBtn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+    else
+        HatchstatusValue.Text = "Inactive"
+        HatchstatusValue.TextColor3 = Color3.fromRGB(255, 50, 50)
+        SwitchBtn.Text = "Turn On"
+        SwitchBtn.BackgroundColor3 = Color3.fromRGB(40, 120, 40)
+    end
+end
+
 local function toggleAll(state)
     AutoHatch = state
     antiAfkEnabled = state
     timerRunning = state
 
-    -- Reset AFK timer if off
     if not state then
         seconds, minutes, hours = 0, 0, 0
         AfkTimeLabel.Text = "0:0:0"
@@ -256,7 +254,7 @@ end)
 -- =========================
 -- 💤 ANTI-AFK LOGIC
 -- =========================
-game.Players.LocalPlayer.Idled:Connect(function()
+LocalPlayer.Idled:Connect(function()
     if antiAfkEnabled then
         VirtualUser:CaptureController()
         VirtualUser:ClickButton2(Vector2.new())
