@@ -33,23 +33,6 @@ local seconds, minutes, hours = 0, 0, 0
 local timerRunning = false
 
 -- =========================
--- 🎬 REMOVE ANIMATION (destroy script immediately)
--- =========================
-task.spawn(function()
-    local openEggsScript = LocalPlayer:WaitForChild("PlayerScripts")
-        :WaitForChild("Scripts")
-        :WaitForChild("Game")
-        :WaitForChild("Open Eggs")
-
-    if openEggsScript then
-        openEggsScript:Destroy()
-        warn("✅ Egg opening animation script destroyed.")
-    else
-        warn("⚠️ Could not find Open Eggs script.")
-    end
-end)
-
--- =========================
 -- 🖼 GUI SETUP
 -- =========================
 local gui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
@@ -163,9 +146,25 @@ SwitchBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 -- =========================
 -- 🎯 AUTO HATCH LOGIC
 -- =========================
+local function get14thRemote()
+    local count = 0
+    for _, obj in ipairs(ReplicatedStorage:GetChildren()) do
+        if obj:IsA("RemoteFunction") then
+            count += 1
+            if count == 14 then
+                return obj
+            end
+        end
+    end
+    return nil
+end
 
 local function HatchEgg()
-    local OpenEgg = ReplicatedStorage:GetChildren()[20]
+    -- Either fixed index (20th child overall)
+    -- local OpenEgg = ReplicatedStorage:GetChildren()[20]
+
+    -- Or dynamic: always the 14th RemoteFunction
+    local OpenEgg = get14thRemote()
 
     if not OpenEgg then
         warn("❌ HatchEgg failed: RemoteFunction[14] not found.")
