@@ -33,6 +33,23 @@ local seconds, minutes, hours = 0, 0, 0
 local timerRunning = false
 
 -- =========================
+-- 🎬 REMOVE ANIMATION (destroy script immediately)
+-- =========================
+task.spawn(function()
+    local openEggsScript = LocalPlayer:WaitForChild("PlayerScripts")
+        :WaitForChild("Scripts")
+        :WaitForChild("Game")
+        :WaitForChild("Open Eggs")
+
+    if openEggsScript then
+        openEggsScript:Destroy()
+        warn("✅ Egg opening animation script destroyed.")
+    else
+        warn("⚠️ Could not find Open Eggs script.")
+    end
+end)
+
+-- =========================
 -- 🖼 GUI SETUP
 -- =========================
 local gui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
