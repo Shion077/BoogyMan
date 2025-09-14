@@ -17,34 +17,13 @@ local Library = require(ReplicatedStorage:WaitForChild("Library"))
 local Save = require(ReplicatedStorage:WaitForChild("Library"):WaitForChild("Client"):WaitForChild("Save"))
 
 -- =========================
--- 🎯 FIND CORRECT REMOTE (14th RemoteFunction)
--- =========================
-local count = 0
-local OpenEgg = nil
-
-for _, obj in ipairs(ReplicatedStorage:GetChildren()) do
-    if obj:IsA("RemoteFunction") then
-        count += 1
-        if count == 14 then
-            obj.Name = "BuyEgg"
-            OpenEgg = obj
-            print("🎯 Renamed RemoteFunction at index " .. count .. " → BuyEgg")
-            break
-        end
-    end
-end
-
-if not OpenEgg then
-    warn("❌ Failed to locate OpenEgg RemoteFunction (index 14 not found).")
-end
-
--- =========================
 -- ⚙️ CONFIG
 -- =========================
 local Eggname = "Pog Egg"
 local NoOfEgg = 21
 
 -- States
+local OpenEgg = nil
 local AutoHatch = false
 local antiAfkEnabled = false
 local failCount = 0
@@ -201,10 +180,29 @@ local function setStatus(active)
 end
 
 local function HatchEgg()
-    if not OpenEgg then return end -- safety
+    -- find RemoteFunction[14] if OpenEgg is nil
+    if not OpenEgg then
+        local count = 0
+        for _, obj in ipairs(ReplicatedStorage:GetChildren()) do
+            if obj:IsA("RemoteFunction") then
+                count += 1
+                if count == 14 then
+                    obj.Name = "BuyEgg"
+                    OpenEgg = obj
+                    print("🎯 Found RemoteFunction[14] → BuyEgg")
+                    break
+                end
+            end
+        end
+    end
+
+    if not OpenEgg then
+        warn("❌ HatchEgg failed: RemoteFunction[14] not found.")
+        return
+    end
 
     local success, result = pcall(function()
-        return OpenEgg:InvokeServer( Eggname, NoOfEgg )
+        return OpenEgg:InvokeServer(Eggname, NoOfEgg)
     end)
 
     if not success then
