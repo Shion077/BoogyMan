@@ -27,7 +27,7 @@ for _, obj in ipairs(ReplicatedStorage:GetChildren()) do
         count += 1
         if count == 14 then
             obj.Name = "BuyEgg"
-            OpenEgg = ReplicatedStorage:WaitForChild("BuyEgg")
+            OpenEgg = obj
             print("🎯 Renamed RemoteFunction at index " .. count .. " → BuyEgg")
             break
         end
@@ -204,7 +204,7 @@ local function HatchEgg()
     if not OpenEgg then return end -- safety
 
     local success, result = pcall(function()
-        return OpenEgg:InvokeServer({ Eggname, NoOfEgg })
+        return OpenEgg:InvokeServer( Eggname, NoOfEgg )
     end)
 
     if not success then
