@@ -16,10 +16,31 @@ local VirtualUser = game:GetService("VirtualUser")
 local Library = require(ReplicatedStorage:WaitForChild("Library"))
 local Save = require(ReplicatedStorage:WaitForChild("Library"):WaitForChild("Client"):WaitForChild("Save"))
 
--- Remote
-local OpenEgg = Workspace:WaitForChild("__THINGS"):WaitForChild("__REMOTES"):WaitForChild("buy egg")
+-- =========================
+-- 🎯 FIND CORRECT REMOTE (14th RemoteFunction)
+-- =========================
+local count = 0
+local OpenEgg = nil
 
--- Config
+for _, obj in ipairs(ReplicatedStorage:GetChildren()) do
+    if obj:IsA("RemoteFunction") then
+        count += 1
+        if count == 14 then
+            obj.Name = "BuyEgg"
+            OpenEgg = ReplicatedStorage:WaitForChild("BuyEgg")
+            print("🎯 Renamed RemoteFunction at index " .. count .. " → BuyEgg")
+            break
+        end
+    end
+end
+
+if not OpenEgg then
+    warn("❌ Failed to locate OpenEgg RemoteFunction (index 14 not found).")
+end
+
+-- =========================
+-- ⚙️ CONFIG
+-- =========================
 local Eggname = "Pog Egg"
 local NoOfEgg = 21
 
@@ -180,8 +201,10 @@ local function setStatus(active)
 end
 
 local function HatchEgg()
+    if not OpenEgg then return end -- safety
+
     local success, result = pcall(function()
-        return OpenEgg:InvokeServer({ Eggname, NoOfEgg })
+        return OpenEgg:InvokeServer(Eggname, NoOfEgg )
     end)
 
     if not success then
