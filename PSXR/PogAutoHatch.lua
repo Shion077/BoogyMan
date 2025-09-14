@@ -19,7 +19,7 @@ local Save = require(ReplicatedStorage:WaitForChild("Library"):WaitForChild("Cli
 -- =========================
 -- ⚙️ CONFIG
 -- =========================
-local Eggname = "Pog Egg"
+local Eggname = "Pog Egg 2"
 local NoOfEgg = 21
 
 -- States
