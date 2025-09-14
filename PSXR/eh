@@ -27,7 +27,7 @@ for _, obj in ipairs(ReplicatedStorage:GetChildren()) do
         count += 1
         if count == 14 then
             obj.Name = "BuyEgg"
-            OpenEgg = obj.Name
+            OpenEgg = ReplicatedStorage:WaitForChild("BuyEgg")
             print("🎯 Renamed RemoteFunction at index " .. count .. " → BuyEgg")
             break
         end
