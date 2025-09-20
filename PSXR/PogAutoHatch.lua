@@ -163,12 +163,12 @@ SwitchBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 -- =========================
 -- 🎯 AUTO HATCH LOGIC
 -- =========================
-local function get14thRemote()
+local function getRemote()
     local count = 0
     for _, obj in ipairs(ReplicatedStorage:GetChildren()) do
         if obj:IsA("RemoteFunction") then
             count += 1
-            if count == 14 then
+            if count == 16 then
                 return obj
             end
         end
@@ -177,11 +177,7 @@ local function get14thRemote()
 end
 
 local function HatchEgg()
-    -- Either fixed index (20th child overall)
-    -- local OpenEgg = ReplicatedStorage:GetChildren()[20]
-
-    -- Or dynamic: always the 14th RemoteFunction
-    local OpenEgg = get14thRemote()
+    local OpenEgg = getRemote()
 
     if not OpenEgg then
         warn("❌ HatchEgg failed: RemoteFunction[14] not found.")
