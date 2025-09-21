@@ -1,0 +1,99 @@
+--// Services
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local LocalPlayer = Players.LocalPlayer
+local Library = require(ReplicatedStorage:WaitForChild("Framework"):WaitForChild("Library"))
+
+-- =========================
+-- 🎯 REMOTE LOCATOR
+-- =========================
+local function getRemote()
+    local count = 0
+    for _, obj in ipairs(ReplicatedStorage:GetChildren()) do
+        if obj:IsA("RemoteFunction") then
+            count += 1
+            if count == 100 then -- change index here if needed
+                return obj
+            end
+        end
+    end
+    return nil
+end
+
+--// Remote (via index)
+local Enchant = getRemote()
+
+-- ======================================================
+-- CONFIG (hardcoded)
+-- ======================================================
+local DesirePetId = "502"                  -- target pet ID (string!)
+local DesireEnchantType = "Cartoon Coins"  -- enchant type
+local AUTO_ENCHANT = true                  -- toggle on/off
+-- ======================================================
+-- HELPER: Check if pet already has desired enchant
+-- ======================================================
+local function HasDesiredEnchant(pet)
+    if not (pet.powers and type(pet.powers) == "table") then
+        return false
+    end
+
+    for _, power in ipairs(pet.powers) do
+        local powerType, level = power[1], power[2]
+        if powerType == DesireEnchantType and level == 5 then
+            return true
+        end
+    end
+
+    return false
+end
+
+-- ======================================================
+-- HELPER: Validate pet for enchanting
+-- ======================================================
+local function IsValidForEnchant(pet)
+    if not pet.dm then
+        return false -- must be dark matter
+    end
+    if HasDesiredEnchant(pet) then
+        return false -- already has desired enchant
+    end
+    return true
+end
+
+-- ======================================================
+-- HELPER: Collect all valid UIDs of target pet
+-- ======================================================
+local function GetValidUIDs(petId)
+    local petsList = Library.Save.Get().Pets
+    local validUIDs = {}
+
+    for _, pet in pairs(petsList) do
+        if type(pet) == "table" and tostring(pet.id) == petId and pet.uid then
+            if IsValidForEnchant(pet) then
+                table.insert(validUIDs, pet.uid)
+            end
+        end
+    end
+
+    return validUIDs
+end
+
+-- ======================================================
+-- MAIN LOOP: Auto Enchant until desired enchant found
+-- ======================================================
+task.spawn(function()
+    while AUTO_ENCHANT do
+        local uids = GetValidUIDs(DesirePetId)
+
+        if #uids > 0 and Enchant then
+            print("✨ Enchanting Pets:", table.concat(uids, ", "))
+            Enchant:InvokeServer({ uids, false })
+        else
+            print("✅ All target pets already have desired enchant:", DesireEnchantType, "Level 4 or 5")
+            AUTO_ENCHANT = false -- stop once all are done
+        end
+
+        task.wait(0.5) -- loop delay
+    end
+end)
