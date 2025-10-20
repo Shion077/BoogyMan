@@ -1,0 +1,191 @@
+--// Services
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+local LocalPlayer = Players.LocalPlayer
+local HttpService = game:GetService("HttpService")
+
+-- ======================================================
+-- 🎯 Remote Grabber
+-- ======================================================
+local function getRemote()
+    local count = 0
+    for _, obj in ipairs(ReplicatedStorage:GetChildren()) do
+        if obj:IsA("RemoteFunction") then
+            count += 1
+            if count == targetremote then -- change index here if needed
+                return obj
+            end
+        end
+    end
+    return nil
+end
+
+local targetremote = tonumber(RemoteBox.Text)
+local BuyBoost = getRemote()
+
+-- ======================================================
+-- 💀 GUI Setup (Boost Buyer)
+-- ======================================================
+local gui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
+gui.Name = "BuyBoost"
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+gui.ResetOnSpawn = false
+
+-- Main Frame
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 120, 0, 80)
+frame.Position = UDim2.new(0.5, -160, 0.5, -135)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 8)
+
+-- Header
+local header = Instance.new("Frame", frame)
+header.Name = "Header"
+header.Size = UDim2.new(1, 0, 0, 20)
+header.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Instance.new("UICorner", header).CornerRadius = UDim.new(0, 12)
+
+-- Title
+local title = Instance.new("TextLabel", header)
+title.Text = "💀Boost Buyer"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 10
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Size = UDim2.new(1, -60, 1, 0)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.BackgroundTransparency = 1
+
+-- Close Button
+local closeBtn = Instance.new("TextButton", header)
+closeBtn.Text = "X"
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextSize = 14
+closeBtn.Size = UDim2.new(0, 15, 0, 15)
+closeBtn.Position = UDim2.new(0, 100, 0, 2)
+closeBtn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(1, 0)
+
+-- Minimize Button
+local minimizeBtn = Instance.new("TextButton", header)
+minimizeBtn.Text = "-"
+minimizeBtn.Font = Enum.Font.GothamBold
+minimizeBtn.TextSize = 18
+minimizeBtn.Size = UDim2.new(0, 15, 0, 15)
+minimizeBtn.Position = UDim2.new(0, 82, 0, 2)
+minimizeBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+minimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", minimizeBtn).CornerRadius = UDim.new(1, 0)
+
+-- Content
+local content = Instance.new("Frame", frame)
+content.Name = "Content"
+content.Position = UDim2.new(0, 0, 0, 30)
+content.Size = UDim2.new(1, 0, 1, -30)
+content.BackgroundTransparency = 1
+
+-- Boost Name Box
+local BoostBox = Instance.new("TextBox", content)
+BoostBox.Size = UDim2.new(0, 100, 0, 20)
+BoostBox.Position = UDim2.new(0, 10, 0, -5)
+BoostBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+BoostBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+BoostBox.PlaceholderText = " BoostName(s)"
+BoostBox.Text = "Triple Coins"
+BoostBox.TextSize = 11
+BoostBox.BorderSizePixel = 0
+
+-- Boost Name Box
+local RemoteBox = Instance.new("TextBox", content)
+RemoteBox.Size = UDim2.new(0, 100, 0, 20)
+RemoteBox.Position = UDim2.new(0, 10, 0, -5)
+RemoteBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+RemoteBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+RemoteBox.PlaceholderText = "Remote"
+RemoteBox.Text = " "
+RemoteBox.TextSize = 11
+RemoteBox.BorderSizePixel = 0
+
+-- Auto Buy Button
+local SwitchBtn = Instance.new("TextButton", content)
+SwitchBtn.Size = UDim2.new(0, 100, 0, 20)
+SwitchBtn.Position = UDim2.new(0, 10, 0, 45)
+SwitchBtn.Text = "Auto Buy"
+SwitchBtn.TextSize = 11
+SwitchBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+SwitchBtn.BackgroundColor3 = Color3.fromRGB(40, 120, 40) -- Green when OFF
+SwitchBtn.BorderSizePixel = 0
+Instance.new("UICorner", SwitchBtn).CornerRadius = UDim.new(0, 6)
+
+-- ======================================================
+-- 🔄 Logic: Minimize & Close
+-- ======================================================
+local isMinimized = false
+local originalSize = frame.Size
+minimizeBtn.MouseButton1Click:Connect(function()
+    isMinimized = not isMinimized
+    if isMinimized then
+        content.Visible = false
+        frame.Size = UDim2.new(originalSize.X.Scale, originalSize.X.Offset, 0, header.Size.Y.Offset)
+        minimizeBtn.Text = "+"
+    else
+        content.Visible = true
+        frame.Size = originalSize
+        minimizeBtn.Text = "-"
+    end
+end)
+
+closeBtn.MouseButton1Click:Connect(function()
+    gui:Destroy()
+end)
+
+-- ======================================================
+-- ⚡ Auto Buy Logic
+-- ======================================================
+local autoBuying = false
+
+SwitchBtn.MouseButton1Click:Connect(function()
+    autoBuying = not autoBuying
+
+    if autoBuying then
+        -- Read remote index from text box
+        local remoteIndex = tonumber(RemoteBox.Text)
+        if not remoteIndex then
+            warn("⚠️ Invalid Remote Index: Please enter a number.")
+            autoBuying = false
+            return
+        end
+
+        targetremote = remoteIndex
+        BuyBoost = getRemote()
+
+        if not BuyBoost then
+            warn("⚠️ No RemoteFunction found at index " .. tostring(targetremote))
+            autoBuying = false
+            return
+        end
+
+        -- Turn ON (red button)
+        SwitchBtn.Text = "Stop Auto"
+        SwitchBtn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+
+        task.spawn(function()
+            while autoBuying do
+                pcall(function()
+                    BuyBoost:InvokeServer(BoostBox.Text)
+                end)
+                task.wait(0.1)
+            end
+        end)
+
+    else
+        -- Turn OFF (green button)
+        SwitchBtn.Text = "Auto Buy"
+        SwitchBtn.BackgroundColor3 = Color3.fromRGB(40, 120, 40)
+    end
+end)
