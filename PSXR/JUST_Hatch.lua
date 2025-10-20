@@ -149,7 +149,7 @@ end
 -- =========================
 -- UI Elements (Compact)
 -- =========================
-local EggNameBox   = createTextBox("EggNameBox", "Egg Name", "Barn Doodle Egg", UDim2.new(0, 5, 0, -5), 110, 20)
+local EggNameBox   = createTextBox("EggNameBox", "Egg Name", "Nightmare Egg 3", UDim2.new(0, 5, 0, -5), 110, 20)
 
 local EggLbl       = createLabel("EggLbl", "No.Egg :", UDim2.new(0, 5, 0, 20))
 local EggBox       = createTextBox("EggToHatch", "Number Of Egg", "21", UDim2.new(0, 62, 0, 20))
@@ -251,7 +251,7 @@ task.spawn(function()
         if AutoHatch then
             HatchEgg()
         end
-        task.wait(0.1)
+        task.wait(0.001)
     end
 end)
 
@@ -298,4 +298,18 @@ end)
 
 closeBtn.MouseButton1Click:Connect(function()
     gui:Destroy()
+end)
+
+-- =========================
+-- 💰 AUTO COLLECT (Instantly Active)
+-- =========================
+task.spawn(function()
+    while task.wait(0.10) do
+        for _, Lootbag in pairs(Workspace["__THINGS"].Lootbags:GetChildren()) do
+            Lootbag.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame
+        end
+        for _, Orb in pairs(Workspace["__THINGS"].Orbs:GetChildren()) do
+            Orb.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame
+        end
+    end
 end)
