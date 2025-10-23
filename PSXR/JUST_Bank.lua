@@ -62,6 +62,7 @@ end
 -- DEPOSIT (Pets only)
 -- ======================================================
 local function Deposit(bankId, petNamesStr)
+    local BankDeposit = BankDepositRemote
     local inv = Library.Save.Get().Pets
     if not inv then
         warn("⚠️ No pets found in inventory")
@@ -102,6 +103,8 @@ end
 -- WITHDRAW (Pets only)
 -- ======================================================
 local function Withdraw(bankId, petNamesStr)
+    local BankWithdraw = BankWithdrawRemote
+    local GetBank = GetBankRemote
     local ok, myBanks = pcall(function()
         return GetBank:InvokeServer({})
     end)
@@ -191,7 +194,7 @@ PetNameBox.Position = UDim2.new(0, 10, 0, 15)
 PetNameBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 PetNameBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 PetNameBox.PlaceholderText = "Pet Name"
-PetNameBox.Text = ""
+PetNameBox.Text = "Exclusive Eyes Egg"
 PetNameBox.TextSize = 11
 PetNameBox.BorderSizePixel = 0
 
@@ -278,3 +281,4 @@ closeBtn.MouseButton1Click:Connect(function()
 end)
 
 print("✅ BoogyMan Pet-Only Bank UI Loaded")
+
