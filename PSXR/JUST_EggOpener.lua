@@ -7,7 +7,23 @@ local LocalPlayer = Players.LocalPlayer
 local Library = require(ReplicatedStorage:WaitForChild("Library"))
 
 --// Remote
-local openEgg = Workspace.__THINGS.__REMOTES["exclusive eggs: open"]
+-- ======================================================
+-- 🎯 Remote Grabber
+-- ======================================================
+local function getRemote(int)
+    local count = 0
+    for _, obj in ipairs(ReplicatedStorage:GetChildren()) do
+        if obj:IsA("RemoteFunction") then
+            count += 1
+            if count == int then -- change index here if needed
+                return obj
+            end
+        end
+    end
+    return nil
+end
+
+local openEgg = getRemote(1)
 
 --// Positions
 local positions = {
@@ -243,4 +259,3 @@ end)
 closeBtn.MouseButton1Click:Connect(function()
 	gui:Destroy()
 end)
-
