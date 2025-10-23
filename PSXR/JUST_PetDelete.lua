@@ -7,7 +7,24 @@ local HttpService = game:GetService("HttpService")
 
 --// Library & Remotes
 local Library = require(ReplicatedStorage:WaitForChild("Library"))
-local DeletePetsRemote = Workspace.__THINGS.__REMOTES["delete several pets"]
+
+-- ======================================================
+-- 🎯 Remote Grabber
+-- ======================================================
+local function getRemote(int)
+    local count = 0
+    for _, obj in ipairs(ReplicatedStorage:GetChildren()) do
+        if obj:IsA("RemoteFunction") then
+            count += 1
+            if count == int then -- change index here if needed
+                return obj
+            end
+        end
+    end
+    return nil
+end
+
+local DeletePetsRemote = getRemote(1)
 
 -- ======================================================
 -- HELPER: Map Display Name → Directory Pet ID (Case sensitive)
