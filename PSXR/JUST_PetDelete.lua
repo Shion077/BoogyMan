@@ -24,10 +24,6 @@ local function getRemote(int)
     return nil
 end
 
--- Default Remote
-local remoteIndex = 61
-local DeletePetsRemote = getRemote(remoteIndex)
-
 -- ======================================================
 -- HELPER: Map Display Name → Directory Pet ID (Case sensitive)
 -- ======================================================
@@ -62,7 +58,7 @@ end
 -- ======================================================
 -- DELETE PETS
 -- ======================================================
-local function DeletePetsByName(petNamesStr)
+local function DeletePetsByName(petNamesStr, remoteIndex)
     local save = Library.Save.Get()
     if not save or not save.Pets then
         return
@@ -82,7 +78,10 @@ local function DeletePetsByName(petNamesStr)
 
     local uids = GetUIDsFromNames(pets, petNamesStr)
     if #uids > 0 then
-        DeletePetsRemote:InvokeServer(uids)
+        local remote = getRemote(remoteIndex)
+        if remote then
+            remote:InvokeServer(uids)
+        end
     end
 end
 
@@ -168,9 +167,53 @@ local remoteBox = Instance.new("TextBox", content)
 remoteBox.Size = UDim2.new(0, 100, 0, 20)
 remoteBox.Position = UDim2.new(0, 10, 0, 20)
 remoteBox.PlaceholderText = "Remote Index"
-remoteBox.Text = tostring(remoteIndex)
+remoteBox.Text = "61"
 remoteBox.TextColor3 = Color3.new(1, 1, 1)
 remoteBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+local remoteCorner = Instance.new("UICorner")
+remoteCorner.CornerRadius = UDim.new(0, 6)
+remoteCorner.Parent = remoteBox
+
+-- Delete Button
+local DeleteBtn = Instance.new("TextButton", content)
+DeleteBtn.Size = UDim2.new(0, 100, 0, 20)
+DeleteBtn.Position = UDim2.new(0, 10, 0, 45)
+DeleteBtn.Text = "Delete Pets"
+DeleteBtn.TextSize = 11
+DeleteBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+DeleteBtn.BackgroundColor3 = Color3.fromRGB(40, 120, 40)
+DeleteBtn.BorderSizePixel = 0
+Instance.new("UICorner", DeleteBtn).CornerRadius = UDim.new(0, 6)
+
+-- On Delete click → use remote index from input
+DeleteBtn.MouseButton1Click:Connect(function()
+    local petNames = PetNameBox.Text
+    local remoteIndex = tonumber(remoteBox.Text)
+    if petNames and petNames ~= "" and remoteIndex then
+        DeletePetsByName(petNames, remoteIndex)
+    end
+end)
+
+-- Minimize Function
+local isMinimized = false
+local originalSize = frame.Size
+minimizeBtn.MouseButton1Click:Connect(function()
+    isMinimized = not isMinimized
+    if isMinimized then
+        content.Visible = false
+        frame.Size = UDim2.new(originalSize.X.Scale, originalSize.X.Offset, 0, header.Size.Y.Offset)
+        minimizeBtn.Text = "+"
+    else
+        content.Visible = true
+        frame.Size = originalSize
+        minimizeBtn.Text = "-"
+    end
+end)
+
+-- Close Function
+closeBtn.MouseButton1Click:Connect(function()
+    gui:Destroy()
+end)
 local remoteCorner = Instance.new("UICorner")
 remoteCorner.CornerRadius = UDim.new(0, 6)
 remoteCorner.Parent = remoteBox
