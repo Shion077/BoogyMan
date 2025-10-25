@@ -3,14 +3,6 @@ local LocalPlayer = Players.LocalPlayer
 
 local defaultListLink = {
     {
-        name = "Duper",
-        code = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Shion077/BoogyMan/refs/heads/main/PSXR/JUST_Dupe1.lua"))()'
-    },    
-    {
-        name = "Reciever",
-        code = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Shion077/BoogyMan/refs/heads/main/PSXR/JUST_Dupe.lua"))()'
-    },
-    {
         name = "Bank",
         code = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Shion077/BoogyMan/refs/heads/main/PSXR/JUST_Bank.lua"))()'
     }, 
@@ -21,10 +13,6 @@ local defaultListLink = {
     {
         name = "Pet Delete",
         code = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Shion077/BoogyMan/refs/heads/main/PSXR/JUST_PetDelete.lua"))()'
-    }, 
-    {
-        name = "Pet Fuse",
-        code = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Shion077/BoogyMan/refs/heads/main/PSXR/JUST_PetFuse.lua"))()'
     }
 }
 
